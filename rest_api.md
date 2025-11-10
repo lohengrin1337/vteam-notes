@@ -17,7 +17,7 @@
 * Actions - verbs
 
 * URLs
-* Media Types - json
+* Media Types - json (or others)
 * Methods - get, post, put, delete
 
 * Convert verbs to nouns (eg. POST a rent)
@@ -120,8 +120,68 @@
     * Authorization: Bearer xxx.xxx.xxx
 * OAuth
     * Login in via social network or similar
-    * Redirect to social network
-    * Log in
-    * Get authorization code
-    * Exchange code for token
-    * Access userdata through api
+    * Exchange code for token, and access some user data from the social account
+
+### Same-Origin Policy and Cross-Origin Resource Sharing (CORS)
+
+* Enable CORS for all origins on a public API with stateless auth
+* Don't enable CORS for all origins when using cookies for auth, or websites that doesn't need it.
+
+### HTTPS
+
+* Always use https for deployed systems, since http is not encrypted
+
+### Caching
+
+* Cache-Control,  Max-Age
+    * Cache locally until cached resource expires
+* ETag, If-None-Match, 304 Not Modified
+    * Cache locally until server resource changes
+* Optimistic locking
+    * Use ETag to protect against updating a resource, that is currently under change
+
+
+## Part 3
+
+[How a RESTful API represents resources](https://www.oreilly.com/content/how-a-restful-api-represents-resources/)
+
+### Representation
+
+* Media Types
+    * Vanilla JSON
+    * [JSON API](https://jsonapi.org/)
+    * [HAL](https://github.com/mikekelly/hal_specification/blob/master/hal_specification.md)
+    * XML
+    * image, video, audio etc
+
+* User centered design
+    * Format that’s easily processable by clients
+        * stadardized date format eg. ISO 8601
+        * Consistant fields - rather null value that omitted field
+    * Precise representation of the resource state from the server
+        * Floats can be inconsistant when performing calculations - use strings or integers when accuracy is important.
+        * JSON booleans true|false - not 1|0 or "1"|"0"
+
+* Add support for sorting, filtering and pagination on the server side
+    * Query parameters: ?sort=distance&filter=storgatan&page=2
+
+* HATEOAS
+    * RESTful API responses need to include links to related resources
+    * eg. pagination - links to prev, next etc.
+    * Can be provided in body or headers
+
+### Versioning
+
+* Always launch an API with versioning
+    * Accept: application/vnd.api.v1+json (more RESTful)
+    * /api/v1/endpoint (more simple)
+* When to launch a new api version
+    * Important changes in response format of existing endpoints
+    * Support both versions for a while
+* When not to launch a new api version
+    * Changes of the implementation in backend
+    * New features that doesn't affect the old behavior
+
+
+## Conclusions
+
