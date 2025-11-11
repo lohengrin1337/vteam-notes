@@ -4,6 +4,9 @@
 
 [How to design a RESTful API architecture from a human-language spec](https://www.oreilly.com/content/how-to-design-a-restful-api-architecture-from-a-human-language-spec/)
 
+### RESTful
+
+* Representational State Transfer
 * Simplicity
 * Extensibillity
 * Reliability
@@ -12,15 +15,19 @@
 1. Indetify nouns and verbs from the system spec
 2. Extract URLs and the methods they respond to from those nouns and verbs
 
-* Resources - nouns
-* Representations - mirror the actual resource with json
-* Actions - verbs
+* Resources (State)
+    * Nouns (*bikes* stored in db)
+* Representations (Representation)
+    * A representation of a resource (JSON, XML structure)
+* Actions (Transfer the state)
+    * Verbs (*delete* a bike)
 
-* URLs
-* Media Types - json (or others)
-* Methods - get, post, put, delete
+* URLs (endpoint)
+* Media Types (JSON, XML or others)
+* Methods - GET, POST, PUT, PATCH, DELETE
 
-* Convert verbs to nouns (eg. POST a rent)
+
+### Convert verbs to nouns (eg. POST a rent)
 
 * GET – Should be used to retrieve data from the server. Means “give me a representation of this resource identified by this URL”. It’s worth noting that we must never use GET to change resources. For this, we have the following other methods.
 * POST – Should be used to provide data to the server. Means “process the resource representation as a new subordinate of this URL”. In practice, POST is mostly used for creating resources. The client specifies the resource representation in the request body and makes a POST to the URL that holds the collection of resources. 3
@@ -31,6 +38,7 @@
 * Which resources and corresponding URLs should we create for our nouns and noun-fied verbs?
 * For each URL + method, which resource data should be included in the request body?
 * For each URL + method, which resource data should be included in the response body?
+
 
 
 ## Part 2
@@ -66,7 +74,7 @@
     * When something wrong happens on the server, not because of client request data, but because of server state itself
 
 
-### Success responses
+### Common success responses
 
 * GET
     * 200 OK + body with resources
@@ -78,7 +86,7 @@
     * 204 No Content
 
 
-### Errors responses
+### Common errors responses
 
 * Invalid authentication
     * 401 Unauthorized + body.errors
@@ -88,7 +96,7 @@
     * 404 Not Found + body.errors
 
 
-### Example response
+### Example response (simplyfied)
 
 [RFC](https://www.rfc-editor.org/rfc/rfc9457.html)
 
@@ -100,8 +108,8 @@
     ]
 }
 
-* Safety - a GET request should never alter server state, and thus is safe
-* Idempotency - subsequent identical requests does not change resources
+* **Safety** - a GET request should never alter server state, and thus is safe
+* **Idempotency** - subsequent identical requests does not change resources
     * eg. after deleting a resource, a subsequent request does nothing
     * when doing subsequent POST requests, state might continue to change...
 
@@ -183,5 +191,37 @@
     * New features that doesn't affect the old behavior
 
 
-## Conclusions
+## Slutsatser
+
+Min bild av hur vi enklast skulle unnan jobba med REST API:et, med utgångspunkt från de tre artiklarna ser ut såhär:
+
+* API:et är spindeln i nätet för hela systemet
+* Definiera varje klients behov (substantiv och verb) från API:et så kondenserat som möjligt, och mappa dem mot HTTP metod + endpoint
+    * Substantiv som *cyklar* är enkla att mappa mot en resurs - `GET api/v1/bikes`
+    * Verb som *hyr* kräver också mappning mot resurs för att vara RESTful - POST a rental - `POST api/v1/rentals` + body
+* API:et validerar och authentiserar requests
+* API:et anropar olika *models* som sköter business logic
+* Orkestrering av business logic sköts av modellerna (inte av API:et)
+* API:et svarar klienten med HTTP status + json representation
+
+
+## Arkitektur
+
+### Kund-app, kund-webb, admin-webb
+Eftersom komunikation behöver gå genom API:et kan klienterna vara separerade i egna containers om vi vill (ser ingen direkt nackdel).
+
+### Backend, API
+Jag ser däremot en stor fördel med att låta API:et sitta ihop med backend business logic, eftersom man slipper ett extra HTTP-lager.
+
+### Databas
+Databas brukar oavsett någon form av lager (mongoClient el liknande), och skulle därför också kunna vara i en egen container (ser ingen nackdel).
+
+### Cykel
+Här är jag osäker. Det skulle kunna vara så att det enklaste är att integrera cyklens logik som en model i backend (`bikeModel.js`), och att de enskilda cyklarna är instanser av den klassen, som lever i backend, och som är representerade i databasen.
+
+### MVC
+Resultatet blir mvc minus view
+* Model = backend business logic module (eg. `bikeModel.js`)
+* View = den logiken hamnar hos klienterna
+* Controller = API routes (eg. `GET api/v1/bikes`)
 
