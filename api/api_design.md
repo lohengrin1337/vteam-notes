@@ -1,4 +1,4 @@
-## Slutsatser kring API och arkitektur
+# Slutsatser kring API och arkitektur
 
 Min bild av hur vi enklast skulle unnan jobba med REST API:et, med utgångspunkt från de tre artiklarna ser ut såhär:
 
