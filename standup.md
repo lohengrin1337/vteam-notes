@@ -25,3 +25,16 @@
 * Är det ett hårt krav att varje cykel ska logga resor (loggfil?), eller kan det sparas centralt i databas?
 * Är det okej att endast erbjuda en betal-lösning? (t.ex. bara faktura, och inte pre-paid)
 * Vi undrar lite kring *dockermiljön* - vad kan man göra innan arkitektur/språk mm. är spikat?
+
+
+## Närmaste veckan
+* SDS
+
+## Senaste veckan
+* Kondenserad kravspec för cykel
+* Utkast till dockermiljö (kommer snart)
+* Arkitektur text
+* Allmän spåning
+
+## Hinder
+* Allt känns svårt...
